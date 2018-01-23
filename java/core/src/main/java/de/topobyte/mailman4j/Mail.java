@@ -23,13 +23,16 @@ public class Mail
 {
 
 	private String address;
+	private String name;
 	private long date;
 	private String subject;
 	private List<String> text;
 
-	public Mail(String address, long date, String subject, List<String> text)
+	public Mail(String address, String name, long date, String subject,
+			List<String> text)
 	{
 		this.address = address;
+		this.name = name;
 		this.date = date;
 		this.subject = subject;
 		this.text = text;
@@ -38,6 +41,11 @@ public class Mail
 	public String getAddress()
 	{
 		return address;
+	}
+
+	public String getName()
+	{
+		return name;
 	}
 
 	public long getDate()

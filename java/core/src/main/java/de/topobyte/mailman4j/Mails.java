@@ -32,6 +32,8 @@ public class Mails
 
 	private static Pattern patternAddresses = Pattern
 			.compile("(\\S*) at (\\S*)\\s*(.*)");
+	private static Pattern patternAddresses2 = Pattern
+			.compile("(\\S*) at (\\S*)\\s*\\((.*)\\)");
 
 	public static List<Mail> convert(List<RawMail> rawMails)
 	{
@@ -47,6 +49,7 @@ public class Mails
 	public static Mail convert(RawMail raw)
 	{
 		String address = null;
+		String name = null;
 		long timestamp = 0;
 
 		Matcher matcher = patternAddresses.matcher(raw.getFrom1());
@@ -62,7 +65,19 @@ public class Mails
 			timestamp = Dates.parseFrom(fromDate);
 		}
 
-		return new Mail(address, timestamp, raw.getSubject(), raw.getText());
+		matcher = patternAddresses2.matcher(raw.getFrom2());
+		if (!matcher.matches()) {
+			logger.warn(String.format("Unmatched: '%s'", raw.getFrom2()));
+		} else {
+			String account = matcher.group(1);
+			String server = matcher.group(2);
+			name = matcher.group(3);
+			logger.debug(String.format("%s@%s (%s)", account, server, name));
+			address = String.format("%s@%s", account, server);
+		}
+
+		return new Mail(address, name, timestamp, raw.getSubject(),
+				raw.getText());
 	}
 
 }

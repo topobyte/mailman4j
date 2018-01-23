@@ -43,7 +43,8 @@ public class MailCat
 	{
 		Instant instant = Instant.ofEpochMilli(mail.getDate());
 
-		System.out.println(String.format("From: %s", mail.getAddress()));
+		System.out.println(String.format("From: %s <%s>", mail.getName(),
+				mail.getAddress()));
 		System.out
 				.println(String.format("Date: %s", formatter.format(instant)));
 		System.out.println(String.format("Subject: %s", mail.getSubject()));
