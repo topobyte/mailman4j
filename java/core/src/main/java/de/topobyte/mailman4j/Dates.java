@@ -34,6 +34,9 @@ public class Dates
 
 	public static long parse(String date)
 	{
+		// Remove extra spaces sometimes used on days
+		date = date.replaceAll(" +", " ");
+
 		Pattern patternWithTimezoneAbbreviations = Pattern
 				.compile("(.*) \\([A-Z]{3,4}\\)");
 		Matcher matcher = patternWithTimezoneAbbreviations.matcher(date);
