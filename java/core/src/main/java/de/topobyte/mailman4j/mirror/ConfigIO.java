@@ -54,15 +54,18 @@ public class ConfigIO
 		Config config = new Config();
 
 		NodeList listInfos = doc.getElementsByTagName("list-info");
-		Element listInfo = (Element) listInfos.item(0);
-		String listInfoUrl = listInfo.getAttribute("url");
+		if (listInfos.getLength() != 0) {
+			Element listInfo = (Element) listInfos.item(0);
+			String listInfoUrl = listInfo.getAttribute("url");
+			config.setUrlListInfo(listInfoUrl);
+		}
 
 		NodeList listArchives = doc.getElementsByTagName("list-archive");
-		Element listArchive = (Element) listArchives.item(0);
-		String listArchiveUrl = listArchive.getAttribute("url");
-
-		config.setUrlListInfo(listInfoUrl);
-		config.setUrlListArchive(listArchiveUrl);
+		if (listArchives.getLength() != 0) {
+			Element listArchive = (Element) listArchives.item(0);
+			String listArchiveUrl = listArchive.getAttribute("url");
+			config.setUrlListArchive(listArchiveUrl);
+		}
 
 		return config;
 	}
