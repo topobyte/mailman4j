@@ -19,9 +19,14 @@ package de.topobyte.mailman4j.cli;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Options;
@@ -36,6 +41,8 @@ import de.topobyte.mailman4j.RawMail;
 import de.topobyte.mailman4j.mirror.Config;
 import de.topobyte.mailman4j.mirror.ConfigIO;
 import de.topobyte.mailman4j.mirror.MirrorPaths;
+import de.topobyte.mailman4j.mirror.TimeSpan;
+import de.topobyte.mailman4j.mirror.TimeSpanBefore;
 import de.topobyte.melon.paths.PathUtil;
 import de.topobyte.utilities.apache.commons.cli.OptionHelper;
 import de.topobyte.utilities.apache.commons.cli.commands.args.CommonsCliArguments;
@@ -66,6 +73,18 @@ public class RunCatMails
 
 	private static boolean printText;
 
+	private static Pattern patternFilenames = Pattern
+			.compile("([0-9]{4,4})-([A-Za-z]+).txt.gz");
+	private static String[] months = new String[] { "January", "February",
+			"March", "April", "May", "June", "July", "August", "September",
+			"October", "November", "December" };
+	private static Map<String, Integer> nameToMonth = new HashMap<>();
+	static {
+		for (int i = 0; i < months.length; i++) {
+			nameToMonth.put(months[i], i + 1);
+		}
+	}
+
 	public static void main(String name, CommonsCliArguments arguments)
 			throws Exception
 	{
@@ -84,7 +103,30 @@ public class RunCatMails
 
 		List<Mail> mails = new ArrayList<>();
 		for (Path file : files) {
-			List<String> lines = GzipUtil.lines(file, config.getCharset());
+			YearMonth fileDate = YearMonth.now();
+			String filename = file.getFileName().toString();
+			Matcher matcher = patternFilenames.matcher(filename);
+			if (matcher.matches()) {
+				String valYear = matcher.group(1);
+				String valMonth = matcher.group(2);
+				int year = Integer.parseInt(valYear);
+				int month = nameToMonth.get(valMonth);
+				fileDate = YearMonth.of(year, month);
+			}
+
+			String charset = config.getCharset();
+			for (TimeSpan span : config.getTimeSpans()) {
+				if (span instanceof TimeSpanBefore) {
+					TimeSpanBefore before = (TimeSpanBefore) span;
+					YearMonth date = YearMonth.of(before.getYear(),
+							before.getMonth());
+					if (fileDate.isBefore(date)) {
+						charset = before.getCharset();
+					}
+				}
+			}
+
+			List<String> lines = GzipUtil.lines(file, charset);
 			MailsParser parser = new MailsParser(lines);
 			parser.parse();
 			List<RawMail> raw = parser.getMails();

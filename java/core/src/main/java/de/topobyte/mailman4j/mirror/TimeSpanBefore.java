@@ -17,55 +17,33 @@
 
 package de.topobyte.mailman4j.mirror;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class Config
+public class TimeSpanBefore implements TimeSpan
 {
 
-	private String urlListInfo;
-	private String urlListArchive;
+	private int year;
+	private int month;
 	private String charset;
-	private List<TimeSpan> timeSpans = new ArrayList<>();
 
-	public String getUrlListInfo()
+	public TimeSpanBefore(int year, int month, String charset)
 	{
-		return urlListInfo;
+		this.year = year;
+		this.month = month;
+		this.charset = charset;
 	}
 
-	public void setUrlListInfo(String urlListInfo)
+	public int getYear()
 	{
-		this.urlListInfo = urlListInfo;
+		return year;
 	}
 
-	public String getUrlListArchive()
+	public int getMonth()
 	{
-		return urlListArchive;
-	}
-
-	public void setUrlListArchive(String ulrListArchive)
-	{
-		this.urlListArchive = ulrListArchive;
+		return month;
 	}
 
 	public String getCharset()
 	{
 		return charset;
-	}
-
-	public void setCharset(String charset)
-	{
-		this.charset = charset;
-	}
-
-	public void addTimeSpan(TimeSpan timeSpan)
-	{
-		timeSpans.add(timeSpan);
-	}
-
-	public List<TimeSpan> getTimeSpans()
-	{
-		return timeSpans;
 	}
 
 }

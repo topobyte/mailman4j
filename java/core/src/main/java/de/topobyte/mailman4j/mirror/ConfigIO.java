@@ -21,6 +21,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -42,6 +44,9 @@ public class ConfigIO
 		input.close();
 		return config;
 	}
+
+	private static Pattern patternDate = Pattern
+			.compile("([0-9]{4,4})-([0-9]{1,2})");
 
 	public static Config read(InputStream input)
 			throws IOException, ParserConfigurationException, SAXException
@@ -70,6 +75,25 @@ public class ConfigIO
 			if (listArchive.hasAttribute("charset")) {
 				String listArchiveCharset = listArchive.getAttribute("charset");
 				config.setCharset(listArchiveCharset);
+			}
+
+			NodeList timeSpans = listArchive.getElementsByTagName("timespan");
+			for (int i = 0; i < timeSpans.getLength(); i++) {
+				Element timeSpan = (Element) timeSpans.item(i);
+				String type = timeSpan.getAttribute("type");
+				if (type.equals("before")) {
+					String valDate = timeSpan.getAttribute("date");
+					String charset = timeSpan.getAttribute("charset");
+					Matcher matcher = patternDate.matcher(valDate);
+					if (matcher.matches()) {
+						String year = matcher.group(1);
+						String month = matcher.group(2);
+						TimeSpanBefore before = new TimeSpanBefore(
+								Integer.parseInt(year), Integer.parseInt(month),
+								charset);
+						config.addTimeSpan(before);
+					}
+				}
 			}
 		}
 
