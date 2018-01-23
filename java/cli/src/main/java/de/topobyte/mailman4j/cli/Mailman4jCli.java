@@ -38,6 +38,8 @@ public class Mailman4jCli
 					RunMirrorInfo.class);
 			options.addCommand("cat-mails", RunCatMails.OPTIONS_FACTORY,
 					RunCatMails.class);
+			options.addCommand("fetch-archives",
+					RunFetchArchives.OPTIONS_FACTORY, RunFetchArchives.class);
 			return options;
 		}
 
