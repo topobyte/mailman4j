@@ -19,10 +19,19 @@ package de.topobyte.mailman4j.cli;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Options;
 
+import de.topobyte.mailman4j.GzipUtil;
+import de.topobyte.mailman4j.Mail;
+import de.topobyte.mailman4j.MailsParser;
+import de.topobyte.mailman4j.mirror.MirrorPaths;
+import de.topobyte.melon.paths.PathUtil;
 import de.topobyte.utilities.apache.commons.cli.OptionHelper;
 import de.topobyte.utilities.apache.commons.cli.commands.args.CommonsCliArguments;
 import de.topobyte.utilities.apache.commons.cli.commands.options.CommonsCliExeOptions;
@@ -56,9 +65,41 @@ public class RunCatMails
 		String argDir = line.getOptionValue(OPTION_DIR);
 		Path pathDir = Paths.get(argDir);
 
-		System.out.println("Directory: " + pathDir);
+		Path dirArchives = pathDir.resolve(MirrorPaths.DIRNAME_ARCHIVES);
+		List<Path> files = PathUtil.list(dirArchives);
 
-		// TODO: implement this
+		List<Mail> mails = new ArrayList<>();
+		for (Path file : files) {
+			List<String> lines = GzipUtil.lines(file);
+			MailsParser parser = new MailsParser(lines);
+			parser.parse();
+			mails.addAll(parser.getMails());
+		}
+
+		Collections.sort(mails, new Comparator<Mail>() {
+
+			@Override
+			public int compare(Mail o1, Mail o2)
+			{
+				return o1.getDate().compareTo(o2.getDate());
+			}
+
+		});
+
+		for (Mail mail : mails) {
+			print(mail);
+		}
+	}
+
+	private static void print(Mail mail)
+	{
+		System.out.println(String.format("From: %s", mail.getFrom1()));
+		System.out.println(String.format("Date: %s", mail.getDate()));
+		System.out.println(String.format("Subject: %s", mail.getSubject()));
+
+		for (String line : mail.getText()) {
+			System.out.println(line);
+		}
 	}
 
 }

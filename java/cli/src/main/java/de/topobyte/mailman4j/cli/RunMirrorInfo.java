@@ -25,6 +25,7 @@ import org.apache.commons.cli.Options;
 
 import de.topobyte.mailman4j.mirror.Config;
 import de.topobyte.mailman4j.mirror.ConfigIO;
+import de.topobyte.mailman4j.mirror.MirrorPaths;
 import de.topobyte.utilities.apache.commons.cli.OptionHelper;
 import de.topobyte.utilities.apache.commons.cli.commands.args.CommonsCliArguments;
 import de.topobyte.utilities.apache.commons.cli.commands.options.CommonsCliExeOptions;
@@ -60,8 +61,8 @@ public class RunMirrorInfo
 
 		System.out.println(String.format("Directory: '%s'", pathDir));
 
-		Path pathConfig = pathDir.resolve("config");
-		Config config = ConfigIO.read(pathConfig);
+		Path fileConfig = pathDir.resolve(MirrorPaths.FILENAME_CONFIG);
+		Config config = ConfigIO.read(fileConfig);
 
 		System.out.println(
 				String.format("list info URL: '%s'", config.getUrlListInfo()));
