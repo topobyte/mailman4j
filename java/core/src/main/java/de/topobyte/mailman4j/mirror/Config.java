@@ -22,6 +22,7 @@ public class Config
 
 	private String urlListInfo;
 	private String urlListArchive;
+	private String charset;
 
 	public String getUrlListInfo()
 	{
@@ -41,6 +42,16 @@ public class Config
 	public void setUrlListArchive(String ulrListArchive)
 	{
 		this.urlListArchive = ulrListArchive;
+	}
+
+	public String getCharset()
+	{
+		return charset;
+	}
+
+	public void setCharset(String charset)
+	{
+		this.charset = charset;
 	}
 
 }

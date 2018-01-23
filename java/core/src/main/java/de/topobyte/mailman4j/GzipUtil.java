@@ -19,6 +19,7 @@ package de.topobyte.mailman4j;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
@@ -30,12 +31,15 @@ import org.apache.commons.io.IOUtils;
 public class GzipUtil
 {
 
-	public static List<String> lines(Path file) throws IOException
+	public static List<String> lines(Path file, String encoding)
+			throws IOException
 	{
 		InputStream input = Files.newInputStream(file);
 		GZIPInputStream gzip = new GZIPInputStream(input);
 
-		String text = IOUtils.toString(gzip);
+		String text = encoding == null
+				? IOUtils.toString(gzip, StandardCharsets.UTF_8)
+				: IOUtils.toString(gzip, encoding);
 		input.close();
 
 		String lines[] = text.split("\\r?\\n");

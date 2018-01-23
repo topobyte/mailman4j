@@ -63,8 +63,14 @@ public class ConfigIO
 		NodeList listArchives = doc.getElementsByTagName("list-archive");
 		if (listArchives.getLength() != 0) {
 			Element listArchive = (Element) listArchives.item(0);
+
 			String listArchiveUrl = listArchive.getAttribute("url");
 			config.setUrlListArchive(listArchiveUrl);
+
+			if (listArchive.hasAttribute("charset")) {
+				String listArchiveCharset = listArchive.getAttribute("charset");
+				config.setCharset(listArchiveCharset);
+			}
 		}
 
 		return config;

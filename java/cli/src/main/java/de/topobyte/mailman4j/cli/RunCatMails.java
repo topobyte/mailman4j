@@ -33,6 +33,8 @@ import de.topobyte.mailman4j.MailComparatorByDate;
 import de.topobyte.mailman4j.Mails;
 import de.topobyte.mailman4j.MailsParser;
 import de.topobyte.mailman4j.RawMail;
+import de.topobyte.mailman4j.mirror.Config;
+import de.topobyte.mailman4j.mirror.ConfigIO;
 import de.topobyte.mailman4j.mirror.MirrorPaths;
 import de.topobyte.melon.paths.PathUtil;
 import de.topobyte.utilities.apache.commons.cli.OptionHelper;
@@ -74,12 +76,15 @@ public class RunCatMails
 
 		printText = !line.hasOption(OPTION_NO_TEXT);
 
+		Path fileConfig = pathDir.resolve(MirrorPaths.FILENAME_CONFIG);
+		Config config = ConfigIO.read(fileConfig);
+
 		Path dirArchives = pathDir.resolve(MirrorPaths.DIRNAME_ARCHIVES);
 		List<Path> files = PathUtil.list(dirArchives);
 
 		List<Mail> mails = new ArrayList<>();
 		for (Path file : files) {
-			List<String> lines = GzipUtil.lines(file);
+			List<String> lines = GzipUtil.lines(file, config.getCharset());
 			MailsParser parser = new MailsParser(lines);
 			parser.parse();
 			List<RawMail> raw = parser.getMails();
