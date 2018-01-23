@@ -141,7 +141,9 @@ public class MailsParser
 		List<String> text = new ArrayList<>();
 		text.addAll(relevantLines.subList(startText, relevantLines.size()));
 
-		mails.add(new Mail(from1, from2, date, subject, text));
+		long timestamp = Dates.parse(date);
+
+		mails.add(new Mail(from1, from2, timestamp, subject, text));
 	}
 
 }

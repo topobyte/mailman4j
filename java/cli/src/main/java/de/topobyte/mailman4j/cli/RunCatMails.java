@@ -87,7 +87,7 @@ public class RunCatMails
 			@Override
 			public int compare(Mail o1, Mail o2)
 			{
-				return o1.getDate().compareTo(o2.getDate());
+				return Long.compare(o1.getDate(), o2.getDate());
 			}
 
 		});

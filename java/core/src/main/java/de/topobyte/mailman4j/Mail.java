@@ -24,11 +24,11 @@ public class Mail
 
 	private String from1;
 	private String from2;
-	private String date;
+	private long date;
 	private String subject;
 	private List<String> text;
 
-	public Mail(String from1, String from2, String date, String subject,
+	public Mail(String from1, String from2, long date, String subject,
 			List<String> text)
 	{
 		this.from1 = from1;
@@ -48,7 +48,7 @@ public class Mail
 		return from2;
 	}
 
-	public String getDate()
+	public long getDate()
 	{
 		return date;
 	}
