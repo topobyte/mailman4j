@@ -19,6 +19,9 @@ package de.topobyte.mailman4j.cli;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -61,6 +64,9 @@ public class RunCatMails
 
 	private static boolean printText;
 
+	private static DateTimeFormatter formatter = DateTimeFormatter
+			.ofPattern("yyyy-MM-dd HH:mm:ss").withZone(ZoneId.systemDefault());
+
 	public static void main(String name, CommonsCliArguments arguments)
 			throws Exception
 	{
@@ -99,8 +105,11 @@ public class RunCatMails
 
 	private static void print(Mail mail)
 	{
+		Instant instant = Instant.ofEpochMilli(mail.getDate());
+
 		System.out.println(String.format("From: %s", mail.getFrom1()));
-		System.out.println(String.format("Date: %s", mail.getDate()));
+		System.out
+				.println(String.format("Date: %s", formatter.format(instant)));
 		System.out.println(String.format("Subject: %s", mail.getSubject()));
 
 		if (printText) {
