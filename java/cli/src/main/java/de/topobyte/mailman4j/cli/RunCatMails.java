@@ -19,9 +19,6 @@ package de.topobyte.mailman4j.cli;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.Instant;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -31,6 +28,7 @@ import org.apache.commons.cli.Options;
 
 import de.topobyte.mailman4j.GzipUtil;
 import de.topobyte.mailman4j.Mail;
+import de.topobyte.mailman4j.MailCat;
 import de.topobyte.mailman4j.MailComparatorByDate;
 import de.topobyte.mailman4j.MailsParser;
 import de.topobyte.mailman4j.mirror.MirrorPaths;
@@ -64,9 +62,6 @@ public class RunCatMails
 
 	private static boolean printText;
 
-	private static DateTimeFormatter formatter = DateTimeFormatter
-			.ofPattern("yyyy-MM-dd HH:mm:ss").withZone(ZoneId.systemDefault());
-
 	public static void main(String name, CommonsCliArguments arguments)
 			throws Exception
 	{
@@ -90,26 +85,12 @@ public class RunCatMails
 
 		Collections.sort(mails, new MailComparatorByDate());
 
+		MailCat cat = new MailCat();
+		cat.setPrintText(printText);
+
 		for (Mail mail : mails) {
-			print(mail);
+			cat.print(mail);
 		}
-	}
-
-	private static void print(Mail mail)
-	{
-		Instant instant = Instant.ofEpochMilli(mail.getDate());
-
-		System.out.println(String.format("From: %s", mail.getFrom1()));
-		System.out
-				.println(String.format("Date: %s", formatter.format(instant)));
-		System.out.println(String.format("Subject: %s", mail.getSubject()));
-
-		if (printText) {
-			for (String line : mail.getText()) {
-				System.out.println(line);
-			}
-		}
-		System.out.println();
 	}
 
 }
