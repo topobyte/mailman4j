@@ -30,7 +30,9 @@ import de.topobyte.mailman4j.GzipUtil;
 import de.topobyte.mailman4j.Mail;
 import de.topobyte.mailman4j.MailCat;
 import de.topobyte.mailman4j.MailComparatorByDate;
+import de.topobyte.mailman4j.Mails;
 import de.topobyte.mailman4j.MailsParser;
+import de.topobyte.mailman4j.RawMail;
 import de.topobyte.mailman4j.mirror.MirrorPaths;
 import de.topobyte.melon.paths.PathUtil;
 import de.topobyte.utilities.apache.commons.cli.OptionHelper;
@@ -80,7 +82,8 @@ public class RunCatMails
 			List<String> lines = GzipUtil.lines(file);
 			MailsParser parser = new MailsParser(lines);
 			parser.parse();
-			mails.addAll(parser.getMails());
+			List<RawMail> raw = parser.getMails();
+			mails.addAll(Mails.convert(raw));
 		}
 
 		Collections.sort(mails, new MailComparatorByDate());

@@ -31,7 +31,7 @@ public class MailsParser
 	final static Logger logger = LoggerFactory.getLogger(MailsParser.class);
 
 	private List<String> lines;
-	private List<Mail> mails;
+	private List<RawMail> mails;
 	private boolean containsInvalid = false;
 
 	public MailsParser(List<String> lines)
@@ -39,7 +39,7 @@ public class MailsParser
 		this.lines = lines;
 	}
 
-	public List<Mail> getMails()
+	public List<RawMail> getMails()
 	{
 		return mails;
 	}
@@ -141,9 +141,7 @@ public class MailsParser
 		List<String> text = new ArrayList<>();
 		text.addAll(relevantLines.subList(startText, relevantLines.size()));
 
-		long timestamp = Dates.parse(date);
-
-		mails.add(new Mail(from1, from2, timestamp, subject, text));
+		mails.add(new RawMail(from1, from2, date, subject, text));
 	}
 
 }

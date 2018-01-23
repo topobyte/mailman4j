@@ -19,28 +19,36 @@ package de.topobyte.mailman4j;
 
 import java.util.List;
 
-public class Mail
+public class RawMail
 {
 
-	private String address;
-	private long date;
+	private String from1;
+	private String from2;
+	private String date;
 	private String subject;
 	private List<String> text;
 
-	public Mail(String address, long date, String subject, List<String> text)
+	public RawMail(String from1, String from2, String date, String subject,
+			List<String> text)
 	{
-		this.address = address;
+		this.from1 = from1;
+		this.from2 = from2;
 		this.date = date;
 		this.subject = subject;
 		this.text = text;
 	}
 
-	public String getAddress()
+	public String getFrom1()
 	{
-		return address;
+		return from1;
 	}
 
-	public long getDate()
+	public String getFrom2()
+	{
+		return from2;
+	}
+
+	public String getDate()
 	{
 		return date;
 	}
