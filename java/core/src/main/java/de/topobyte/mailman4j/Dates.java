@@ -32,13 +32,14 @@ public class Dates
 
 	final static Logger logger = LoggerFactory.getLogger(Dates.class);
 
+	private static Pattern patternWithTimezoneAbbreviations = Pattern
+			.compile("(.*) \\([A-Z]{3,4}\\)");
+
 	public static long parse(String date)
 	{
 		// Remove extra spaces sometimes used on days
 		date = date.replaceAll(" +", " ");
 
-		Pattern patternWithTimezoneAbbreviations = Pattern
-				.compile("(.*) \\([A-Z]{3,4}\\)");
 		Matcher matcher = patternWithTimezoneAbbreviations.matcher(date);
 		if (matcher.matches()) {
 			date = matcher.group(1);
