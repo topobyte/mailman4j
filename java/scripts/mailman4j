@@ -1,0 +1,7 @@
+#!/bin/bash
+
+DIR=$(dirname $0)
+CMD="$DIR/mailman4j.sh"
+CLASS="de.topobyte.mailman4j.cli.Mailman4jCli"
+
+exec "$CMD" "$CLASS" "$@"

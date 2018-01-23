@@ -1,6 +1,8 @@
 dependencies {
     compile project(':mailman4j-core')
 
+    compile 'de.topobyte:commons-cli-helper:0.0.6'
+
     compile 'org.slf4j:slf4j-api:1.6.1'
     runtime 'org.slf4j:slf4j-log4j12:1.6.1'
     runtime 'log4j:log4j:1.2.16'
