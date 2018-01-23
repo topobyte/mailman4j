@@ -42,6 +42,7 @@ public class RunCatMails
 {
 
 	private static final String OPTION_DIR = "dir";
+	private static final String OPTION_NO_TEXT = "no-text";
 
 	public static ExeOptionsFactory OPTIONS_FACTORY = new ExeOptionsFactory() {
 
@@ -51,11 +52,14 @@ public class RunCatMails
 			Options options = new Options();
 			// @formatter:off
 			OptionHelper.addL(options, OPTION_DIR, true, true, "directory", "a mailman mirror directory");
+			OptionHelper.addL(options, OPTION_NO_TEXT, false, false, "don't print mail text");
 			// @formatter:on
 			return new CommonsCliExeOptions(options, "[options]");
 		}
 
 	};
+
+	private static boolean printText;
 
 	public static void main(String name, CommonsCliArguments arguments)
 			throws Exception
@@ -64,6 +68,8 @@ public class RunCatMails
 
 		String argDir = line.getOptionValue(OPTION_DIR);
 		Path pathDir = Paths.get(argDir);
+
+		printText = !line.hasOption(OPTION_NO_TEXT);
 
 		Path dirArchives = pathDir.resolve(MirrorPaths.DIRNAME_ARCHIVES);
 		List<Path> files = PathUtil.list(dirArchives);
@@ -97,9 +103,12 @@ public class RunCatMails
 		System.out.println(String.format("Date: %s", mail.getDate()));
 		System.out.println(String.format("Subject: %s", mail.getSubject()));
 
-		for (String line : mail.getText()) {
-			System.out.println(line);
+		if (printText) {
+			for (String line : mail.getText()) {
+				System.out.println(line);
+			}
 		}
+		System.out.println();
 	}
 
 }
