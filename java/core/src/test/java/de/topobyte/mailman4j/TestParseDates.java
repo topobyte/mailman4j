@@ -28,7 +28,7 @@ public class TestParseDates
 				"Mon,  9 May 2011 12:41:51 +0200" };
 
 		for (String date : test) {
-			long timestamp = Dates.parse(date);
+			long timestamp = Dates.parseRfc1123(date);
 			System.out.println(timestamp);
 		}
 	}

@@ -46,7 +46,8 @@ public class Mails
 
 	public static Mail convert(RawMail raw)
 	{
-		String address = raw.getFrom1();
+		String address = null;
+		long timestamp = 0;
 
 		Matcher matcher = patternAddresses.matcher(raw.getFrom1());
 		if (!matcher.matches()) {
@@ -58,9 +59,8 @@ public class Mails
 			logger.debug(
 					String.format("%s@%s (%s)", account, server, fromDate));
 			address = String.format("%s@%s", account, server);
+			timestamp = Dates.parseFrom(fromDate);
 		}
-
-		long timestamp = Dates.parse(raw.getDate());
 
 		return new Mail(address, timestamp, raw.getSubject(), raw.getText());
 	}
