@@ -1,0 +1,52 @@
+// Copyright 2018 Sebastian Kuerten
+//
+// This file is part of mailman4j.
+//
+// mailman4j is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// mailman4j is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with mailman4j. If not, see <http://www.gnu.org/licenses/>.
+
+package de.topobyte.mailman4j.http;
+
+public class DownloadedText
+{
+
+	private String text;
+	private long lastModified;
+
+	public DownloadedText(String text, long lastModified)
+	{
+		this.text = text;
+		this.lastModified = lastModified;
+	}
+
+	public String getText()
+	{
+		return text;
+	}
+
+	public void setText(String text)
+	{
+		this.text = text;
+	}
+
+	public long getLastModified()
+	{
+		return lastModified;
+	}
+
+	public void setLastModified(long lastModified)
+	{
+		this.lastModified = lastModified;
+	}
+
+}
