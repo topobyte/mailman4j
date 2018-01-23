@@ -24,7 +24,6 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import org.apache.commons.cli.CommandLine;
@@ -32,6 +31,7 @@ import org.apache.commons.cli.Options;
 
 import de.topobyte.mailman4j.GzipUtil;
 import de.topobyte.mailman4j.Mail;
+import de.topobyte.mailman4j.MailComparatorByDate;
 import de.topobyte.mailman4j.MailsParser;
 import de.topobyte.mailman4j.mirror.MirrorPaths;
 import de.topobyte.melon.paths.PathUtil;
@@ -88,15 +88,7 @@ public class RunCatMails
 			mails.addAll(parser.getMails());
 		}
 
-		Collections.sort(mails, new Comparator<Mail>() {
-
-			@Override
-			public int compare(Mail o1, Mail o2)
-			{
-				return Long.compare(o1.getDate(), o2.getDate());
-			}
-
-		});
+		Collections.sort(mails, new MailComparatorByDate());
 
 		for (Mail mail : mails) {
 			print(mail);
