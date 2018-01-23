@@ -17,10 +17,13 @@
 
 package de.topobyte.mailman4j;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import javax.mail.internet.MimeUtility;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -76,8 +79,23 @@ public class Mails
 			address = String.format("%s@%s", account, server);
 		}
 
-		return new Mail(address, name, timestamp, raw.getSubject(),
-				raw.getText());
+		try {
+			name = MimeUtility.decodeText(name);
+		} catch (UnsupportedEncodingException e) {
+			logger.warn(String.format("Error while decoding name '%s'", name),
+					e);
+		}
+
+		String subject = raw.getSubject();
+		try {
+			subject = MimeUtility.decodeText(subject);
+		} catch (UnsupportedEncodingException e) {
+			logger.warn(
+					String.format("Error while decoding subject '%s'", subject),
+					e);
+		}
+
+		return new Mail(address, name, timestamp, subject, raw.getText());
 	}
 
 }
