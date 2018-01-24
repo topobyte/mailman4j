@@ -40,6 +40,8 @@ public class Mailman4jCli
 					RunCatMails.class);
 			options.addCommand("fetch-archives",
 					RunFetchArchives.OPTIONS_FACTORY, RunFetchArchives.class);
+			options.addCommand("list-authors", RunListAuthors.OPTIONS_FACTORY,
+					RunListAuthors.class);
 			return options;
 		}
 
