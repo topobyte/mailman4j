@@ -19,6 +19,8 @@ package de.topobyte.mailman4j.cli;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDate;
+import java.time.Year;
 import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -30,7 +32,10 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Options;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import de.topobyte.mailman4j.DayPeriod;
 import de.topobyte.mailman4j.GzipUtil;
 import de.topobyte.mailman4j.Mail;
 import de.topobyte.mailman4j.MailCat;
@@ -53,8 +58,13 @@ import de.topobyte.utilities.apache.commons.cli.commands.options.ExeOptionsFacto
 public class RunCatMails
 {
 
+	final static Logger logger = LoggerFactory.getLogger(RunCatMails.class);
+
 	private static final String OPTION_DIR = "dir";
 	private static final String OPTION_NO_TEXT = "no-text";
+	private static final String OPTION_YEAR = "year";
+	private static final String OPTION_MONTH = "month";
+	private static final String OPTION_DAY = "day";
 
 	public static ExeOptionsFactory OPTIONS_FACTORY = new ExeOptionsFactory() {
 
@@ -65,6 +75,9 @@ public class RunCatMails
 			// @formatter:off
 			OptionHelper.addL(options, OPTION_DIR, true, true, "directory", "a mailman mirror directory");
 			OptionHelper.addL(options, OPTION_NO_TEXT, false, false, "don't print mail text");
+			OptionHelper.addL(options, OPTION_YEAR, true, false, "filter by year");
+			OptionHelper.addL(options, OPTION_MONTH, true, false, "filter by month");
+			OptionHelper.addL(options, OPTION_DAY, true, false, "filter by day of month");
 			// @formatter:on
 			return new CommonsCliExeOptions(options, "[options]");
 		}
@@ -95,6 +108,8 @@ public class RunCatMails
 
 		printText = !line.hasOption(OPTION_NO_TEXT);
 
+		DayPeriod period = period(line);
+
 		Path fileConfig = pathDir.resolve(MirrorPaths.FILENAME_CONFIG);
 		Config config = ConfigIO.read(fileConfig);
 
@@ -107,11 +122,10 @@ public class RunCatMails
 			String filename = file.getFileName().toString();
 			Matcher matcher = patternFilenames.matcher(filename);
 			if (matcher.matches()) {
-				String valYear = matcher.group(1);
-				String valMonth = matcher.group(2);
-				int year = Integer.parseInt(valYear);
-				int month = nameToMonth.get(valMonth);
-				fileDate = YearMonth.of(year, month);
+				fileDate = yearMonth(matcher);
+			}
+			if (!period.intersects(fileDate)) {
+				continue;
 			}
 
 			String charset = config.getCharset();
@@ -139,8 +153,72 @@ public class RunCatMails
 		cat.setPrintText(printText);
 
 		for (Mail mail : mails) {
+			if (period != null && !period.contains(mail.getDate())) {
+				continue;
+			}
 			cat.print(mail);
 		}
+	}
+
+	private static DayPeriod period(CommandLine line)
+	{
+		String argYear = line.getOptionValue(OPTION_YEAR);
+		String argMonth = line.getOptionValue(OPTION_MONTH);
+		String argDay = line.getOptionValue(OPTION_DAY);
+
+		int year = -1;
+		int month = -1;
+		int day = -1;
+
+		if (argYear != null) {
+			year = Integer.parseInt(argYear);
+		}
+		if (argMonth != null) {
+			month = Integer.parseInt(argMonth);
+		}
+		if (argDay != null) {
+			day = Integer.parseInt(argDay);
+		}
+
+		DayPeriod period = null;
+
+		if (argYear == null && argMonth == null && argDay == null) {
+			period = null;
+		} else if (argYear != null && argMonth != null && argDay != null) {
+			LocalDate date = LocalDate.of(year, month, day);
+			LocalDate nextDay = date.plusDays(1);
+			period = new DayPeriod(date, nextDay);
+			logger.debug(String.format("year, month and day: %s - %s", date,
+					nextDay));
+		} else if (argYear != null && argMonth != null) {
+			YearMonth yearMonth = YearMonth.of(year, month);
+			LocalDate monthStart = yearMonth.atDay(1);
+			LocalDate monthEnd = yearMonth.atEndOfMonth();
+			LocalDate firstDayOfNextMonth = monthEnd.plusDays(1);
+			period = new DayPeriod(monthStart, firstDayOfNextMonth);
+			logger.debug(String.format("year and month: %s - %s", monthStart,
+					firstDayOfNextMonth));
+		} else if (argYear != null) {
+			LocalDate start = Year.of(year).atMonth(1).atDay(1);
+			LocalDate end = Year.of(year + 1).atMonth(1).atDay(1);
+			period = new DayPeriod(start, end);
+			logger.debug(String.format("year only: %s - %s", start, end));
+		} else {
+			throw new IllegalArgumentException(
+					"Invalid combination of date specifiers");
+		}
+
+		return period;
+	}
+
+	private static YearMonth yearMonth(Matcher matcher)
+	{
+		String valYear = matcher.group(1);
+		String valMonth = matcher.group(2);
+		int year = Integer.parseInt(valYear);
+		int month = nameToMonth.get(valMonth);
+		YearMonth date = YearMonth.of(year, month);
+		return date;
 	}
 
 }
