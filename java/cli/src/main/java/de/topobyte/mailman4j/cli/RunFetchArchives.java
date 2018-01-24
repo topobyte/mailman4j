@@ -36,8 +36,6 @@ import de.topobyte.utilities.apache.commons.cli.commands.options.ExeOptionsFacto
 public class RunFetchArchives
 {
 
-	private static final String OPTION_DIR = "dir";
-
 	public static ExeOptionsFactory OPTIONS_FACTORY = new ExeOptionsFactory() {
 
 		@Override
@@ -45,7 +43,7 @@ public class RunFetchArchives
 		{
 			Options options = new Options();
 			// @formatter:off
-			OptionHelper.addL(options, OPTION_DIR, true, true, "directory", "a mailman mirror directory");
+			OptionHelper.addL(options, CommonOptions.OPTION_DIR, true, true, CommonOptions.ARG_DIR, CommonOptions.DESCRIPTION_DIR);
 			// @formatter:on
 			return new CommonsCliExeOptions(options, "[options]");
 		}
@@ -57,7 +55,7 @@ public class RunFetchArchives
 	{
 		CommandLine line = arguments.getLine();
 
-		String argDir = line.getOptionValue(OPTION_DIR);
+		String argDir = line.getOptionValue(CommonOptions.OPTION_DIR);
 		Path pathDir = Paths.get(argDir);
 
 		Path fileConfig = pathDir.resolve(MirrorPaths.FILENAME_CONFIG);
