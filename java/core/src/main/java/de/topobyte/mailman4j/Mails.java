@@ -80,7 +80,9 @@ public class Mails
 		}
 
 		try {
-			name = MimeUtility.decodeText(name);
+			if (name != null) {
+				name = MimeUtility.decodeText(name);
+			}
 		} catch (UnsupportedEncodingException e) {
 			logger.warn(String.format("Error while decoding name '%s'", name),
 					e);
