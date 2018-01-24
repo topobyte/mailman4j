@@ -36,6 +36,8 @@ public class Mailman4jCli
 			DelegateExeOptions options = new DelegateExeOptions();
 			options.addCommand("mirror-info", RunMirrorInfo.OPTIONS_FACTORY,
 					RunMirrorInfo.class);
+			options.addCommand("count-mails", RunCountMails.OPTIONS_FACTORY,
+					RunCountMails.class);
 			options.addCommand("cat-mails", RunCatMails.OPTIONS_FACTORY,
 					RunCatMails.class);
 			options.addCommand("fetch-archives",
