@@ -59,7 +59,7 @@ public class Util
 	}
 
 	private static Pattern patternFilenames = Pattern
-			.compile("([0-9]{4,4})-([A-Za-z]+).txt.gz");
+			.compile("([0-9]{4,4})-([A-Za-z]+).txt(.gz)?");
 
 	static DayPeriod period(CommandLine line)
 	{
@@ -122,6 +122,11 @@ public class Util
 		return date;
 	}
 
+	static boolean isGzip(Matcher matcher)
+	{
+		return matcher.group(3) != null;
+	}
+
 	static List<Mail> mails(List<Path> files, Config config, DayPeriod period)
 			throws IOException
 	{
@@ -137,6 +142,8 @@ public class Util
 				continue;
 			}
 
+			boolean gzip = isGzip(matcher);
+
 			String charset = config.getCharset();
 			for (TimeSpan span : config.getTimeSpans()) {
 				if (span instanceof TimeSpanBefore) {
@@ -149,7 +156,12 @@ public class Util
 				}
 			}
 
-			List<String> lines = GzipUtil.lines(file, charset);
+			List<String> lines;
+			if (gzip) {
+				lines = GzipUtil.linesGzip(file, charset);
+			} else {
+				lines = GzipUtil.lines(file, charset);
+			}
 			MailsParser parser = new MailsParser(lines);
 			parser.parse();
 			List<RawMail> raw = parser.getMails();

@@ -35,11 +35,24 @@ public class GzipUtil
 			throws IOException
 	{
 		InputStream input = Files.newInputStream(file);
+		return lines(input, encoding);
+	}
+
+	public static List<String> linesGzip(Path file, String encoding)
+			throws IOException
+	{
+		InputStream input = Files.newInputStream(file);
 		GZIPInputStream gzip = new GZIPInputStream(input);
 
+		return lines(gzip, encoding);
+	}
+
+	private static List<String> lines(InputStream input, String encoding)
+			throws IOException
+	{
 		String text = encoding == null
-				? IOUtils.toString(gzip, StandardCharsets.UTF_8)
-				: IOUtils.toString(gzip, encoding);
+				? IOUtils.toString(input, StandardCharsets.UTF_8)
+				: IOUtils.toString(input, encoding);
 		input.close();
 
 		String lines[] = text.split("\\r?\\n");

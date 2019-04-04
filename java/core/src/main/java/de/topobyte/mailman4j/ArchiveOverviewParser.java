@@ -40,7 +40,7 @@ public class ArchiveOverviewParser
 				continue;
 			}
 			String href = element.attr("href");
-			if (!href.endsWith(".txt.gz")) {
+			if (!(href.endsWith(".txt.gz") || href.endsWith(".txt"))) {
 				continue;
 			}
 			links.add(href);
