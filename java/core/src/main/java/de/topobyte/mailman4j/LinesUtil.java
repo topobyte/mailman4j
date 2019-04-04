@@ -28,7 +28,7 @@ import java.util.zip.GZIPInputStream;
 
 import org.apache.commons.io.IOUtils;
 
-public class GzipUtil
+public class LinesUtil
 {
 
 	public static List<String> lines(Path file, String encoding)

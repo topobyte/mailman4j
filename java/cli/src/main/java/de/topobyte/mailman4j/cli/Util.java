@@ -34,7 +34,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.topobyte.mailman4j.DayPeriod;
-import de.topobyte.mailman4j.GzipUtil;
+import de.topobyte.mailman4j.LinesUtil;
 import de.topobyte.mailman4j.Mail;
 import de.topobyte.mailman4j.Mails;
 import de.topobyte.mailman4j.MailsParser;
@@ -158,9 +158,9 @@ public class Util
 
 			List<String> lines;
 			if (gzip) {
-				lines = GzipUtil.linesGzip(file, charset);
+				lines = LinesUtil.linesGzip(file, charset);
 			} else {
-				lines = GzipUtil.lines(file, charset);
+				lines = LinesUtil.lines(file, charset);
 			}
 			MailsParser parser = new MailsParser(lines);
 			parser.parse();
